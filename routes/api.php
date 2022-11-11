@@ -14,4 +14,9 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::prefix('counter')->group(function () {
+    Route::put("increment", [CounterController::class, "increment"]);
+    Route::put("decrement", [CounterController::class, "decrement"]);
+});
+
 Route::apiResource('counter', CounterController::class);
