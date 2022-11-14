@@ -12,9 +12,10 @@ class ApiGateway
      * @param $method
      * @param $requestUrl
      * @param array $formParams
-     * @return array
+     * @param bool $isFile
+     * @return mixed
      */
-    public static function performRequest($method, $requestUrl, $formParams = []): array
+    public static function performRequest($method, $requestUrl, $formParams = [], $isFile = false): mixed
     {
         $base_uri = config("services.api_gateway.base_uri");
 
@@ -49,7 +50,10 @@ class ApiGateway
         $data = json_decode($response->body(), true);
 
         if ($data == null) {
-            $data = ['error' => strlen($response->body()) ? $response->body() : "Error interno del servidor", 'code' => 500];
+            if ($isFile && $response->successful()) {
+                return $response->body();
+            }
+            $data = ['error' => config('app.debug') && strlen($response->body()) ? $response->body() : "Error interno del servidor", 'code' => 500];
         }
 
         return $data;
